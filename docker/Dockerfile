@@ -31,7 +31,7 @@ RUN apt-get -y update && \
     apt-get -y install --no-install-recommends \
       curl gnupg apt-transport-https \
       python3 python3-dev python3-pip python3-venv \
-      openvpn patch git gcc && \
+      openssh-server openvpn patch git gcc && \
     curl -fsSL https://download.docker.com/linux/debian/gpg >/etc/apt/trusted.gpg.d/docker.asc && \
     codename=$(awk -F= '/VERSION_CODENAME/{print $2}' /etc/os-release) && \
     arch=$(dpkg --print-architecture) && \
@@ -45,9 +45,10 @@ RUN apt-get -y update && \
     ln -sf ${TPA_DIR}/bin/tpaexec /usr/local/bin && \
     mkdir /opt/2ndQuadrant/ && \
     ln -sf ${TPA_DIR} /opt/2ndQuadrant/TPA && \
-    tpaexec setup --use-community-ansible && \
+    tpaexec setup && \
     tpaexec selftest && \
     (cd "${TPA_DIR}" && git describe --tags >VERSION) && \
+    ${TPA_DIR}/tpa-venv/bin/pip install dnspython && \
     \
     # Clean up unnecessary files and packages \
     \
